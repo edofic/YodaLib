@@ -17,8 +17,10 @@ package com.edofic.yodalib.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -92,14 +94,24 @@ public class Datasource<T> {
         close();
     }
 
-    public T get(String whereClause) {
-        //todo
-        return null;
+    public List<T> get(String whereClause) {
+        open();
+        ArrayList<T> items = new ArrayList<T>();
+        Cursor cursor =
+                db.query(metaData.getTableName(), metaData.getColumnNames(), whereClause,
+                        null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            items.add((T) metaData.cursorToObject(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        close();
+        return items;
     }
 
     public List<T> getAll() {
-        //todo
-        return null;
+        return get(null);
     }
 
     public void delete(String whereClause) {

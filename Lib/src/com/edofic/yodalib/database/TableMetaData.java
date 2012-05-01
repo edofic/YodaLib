@@ -15,6 +15,9 @@
 
 package com.edofic.yodalib.database;
 
+import android.database.Cursor;
+
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,21 +32,32 @@ import java.util.Comparator;
  * mapping to columns is with respect to alphabetic order of fields
  */
 class TableMetaData {
+    private Class c;
     private String tableName;
     private int version;
-    private ArrayList<ColumnMetaData> columns = new ArrayList<ColumnMetaData>();
-    private ArrayList<ColumnMetaData> columnsNoIncrement = new ArrayList<ColumnMetaData>();
-    private ArrayList<ColumnMetaData> columnsAutoincrement = new ArrayList<ColumnMetaData>();
+    private final ArrayList<ColumnMetaData> columns = new ArrayList<ColumnMetaData>();
+    private final String[] columnNames;
+    private final ArrayList<ColumnMetaData> columnsNoIncrement = new ArrayList<ColumnMetaData>();
+    private final ArrayList<ColumnMetaData> columnsAutoincrement = new ArrayList<ColumnMetaData>();
+    private Constructor constructor;
 
     TableMetaData(Class c) {
         @SuppressWarnings(value = "unchecked")
         Table table = (Table) c.getAnnotation(Table.class);
         if (table == null) {
-            return;
+            throw new IllegalArgumentException("must provide annotated class");
         }
-
+        this.c = c;
         tableName = table.name();
         version = table.version();
+
+        try {
+            constructor = c.getDeclaredConstructor(new Class[0]);
+            constructor.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            //TODO implement
+        }
 
         Field[] fields = c.getDeclaredFields();
         Arrays.sort(fields, new FieldComparator());
@@ -60,6 +74,24 @@ class TableMetaData {
                 }
             }
         }
+
+        columnNames = new String[columns.size()];
+        for (int i = 0; i < columns.size(); i++) {
+            columnNames[i] = columns.get(i).getName();
+        }
+    }
+
+    public Object cursorToObject(Cursor cursor) {
+        try {
+            Object o = constructor.newInstance(null);
+            for (int i = 0; i < columns.size(); i++) {
+                columns.get(i).set(cursor, o);
+            }
+            return o;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public String getTableName() {
@@ -68,6 +100,10 @@ class TableMetaData {
 
     public ArrayList<ColumnMetaData> getColumns() {
         return columns;
+    }
+
+    public String[] getColumnNames() {
+        return columnNames;
     }
 
     public ArrayList<ColumnMetaData> getColumnsNoIncrement() {
