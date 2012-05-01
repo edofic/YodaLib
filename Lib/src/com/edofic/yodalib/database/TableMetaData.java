@@ -30,14 +30,18 @@ import java.util.Comparator;
  */
 class TableMetaData {
     private String tableName;
+    private int version;
     private ArrayList<ColumnMetaData> columns = new ArrayList<ColumnMetaData>();
 
     TableMetaData(Class c) {
         @SuppressWarnings(value = "unchecked")
         Table table = (Table) c.getAnnotation(Table.class);
-        if (table != null) {
-            tableName = table.name();
+        if (table == null) {
+            return;
         }
+
+        tableName = table.name();
+        version = table.version();
 
         Field[] fields = c.getDeclaredFields();
         Arrays.sort(fields, new FieldComparator());
@@ -56,6 +60,10 @@ class TableMetaData {
 
     public ArrayList<ColumnMetaData> getColumns() {
         return columns;
+    }
+
+    public int getVersion() {
+        return version;
     }
 
     private class FieldComparator implements Comparator<Field> {

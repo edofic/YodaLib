@@ -29,6 +29,8 @@ import java.lang.reflect.Field;
 class ColumnMetaData {
     private int index;
     private String name;
+    private boolean primary = false;
+    private boolean autoincrement = false;
     private Type type;
     private Field field;
 
@@ -41,6 +43,8 @@ class ColumnMetaData {
 
         this.index = index;
         name = column.name();
+        primary = column.primaryKey();
+        autoincrement = column.autoIncrement();
 
         Class fieldType = field.getType();
         if (fieldType == long.class) {
@@ -59,6 +63,18 @@ class ColumnMetaData {
 
     public String getName() {
         return name;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    public boolean isAutoincrement() {
+        return autoincrement;
     }
 
     public void set(Cursor c, Object o) {

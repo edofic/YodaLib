@@ -15,37 +15,44 @@
 
 package com.edofic.yodalib.database;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+
 /**
  * User: andraz
  * Date: 4/28/12
- * Time: 3:01 PM
- * Supported types for persisting on a sqlite db
+ * Time: 5:13 PM
  */
-enum Type {
-    NULL(0, "null"),
-    INTEGER(1, "integer"),
-    FLOAT(2, "real"),
-    STRING(3, "text"),
-    BLOB(4, "blob");
-
-    private int value;
-    private String text;
-
-    Type(int value, String text) {
-        this.value = value;
-        this.text = text;
-    }
+public class Datasource<T> {
+    private SQLiteDatabase db;
+    private final DatabaseOpenHelper helper;
+    private Class c;
 
     /**
-     * return value
+     * creates new datasource (one table/db)
      *
-     * @return value as displayed in android javadoc
+     * @param context
+     * @param c       must be equal to T
      */
-    public int getValue() {
-        return value;
+    public Datasource(Context context, Class c) {
+        this.c = c;
+        helper = new DatabaseOpenHelper(context, c);
     }
 
-    public String getText() {
-        return text;
+    private void open() {
+        db = helper.getWritableDatabase();
+    }
+
+    public void close() {
+        db.close();
+    }
+
+    //insert
+    //get
+    //get all
+    //delete
+
+    public void insert(T t) {
+
     }
 }

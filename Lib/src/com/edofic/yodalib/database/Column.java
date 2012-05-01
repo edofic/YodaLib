@@ -29,4 +29,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Column {
     public String name();
+
+    public boolean primaryKey() default false;
+
+    public boolean autoIncrement() default false;
 }

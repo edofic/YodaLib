@@ -30,4 +30,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Table {
     public String name();
+
+    public int version() default 1;
 }
