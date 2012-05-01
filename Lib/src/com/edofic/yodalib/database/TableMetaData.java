@@ -32,6 +32,8 @@ class TableMetaData {
     private String tableName;
     private int version;
     private ArrayList<ColumnMetaData> columns = new ArrayList<ColumnMetaData>();
+    private ArrayList<ColumnMetaData> columnsNoIncrement = new ArrayList<ColumnMetaData>();
+    private ArrayList<ColumnMetaData> columnsAutoincrement = new ArrayList<ColumnMetaData>();
 
     TableMetaData(Class c) {
         @SuppressWarnings(value = "unchecked")
@@ -49,7 +51,13 @@ class TableMetaData {
             @SuppressWarnings(value = "unchecked")
             Column column = f.getAnnotation(Column.class);
             if (column != null) {
-                columns.add(new ColumnMetaData(columns.size(), f));
+                final ColumnMetaData data = new ColumnMetaData(columns.size(), f);
+                columns.add(data);
+                if (column.autoIncrement()) {
+                    columnsAutoincrement.add(data);
+                } else {
+                    columnsNoIncrement.add(data);
+                }
             }
         }
     }
@@ -60,6 +68,14 @@ class TableMetaData {
 
     public ArrayList<ColumnMetaData> getColumns() {
         return columns;
+    }
+
+    public ArrayList<ColumnMetaData> getColumnsNoIncrement() {
+        return columnsNoIncrement;
+    }
+
+    public ArrayList<ColumnMetaData> getColumnsAutoincrement() {
+        return columnsAutoincrement;
     }
 
     public int getVersion() {

@@ -15,8 +15,11 @@
 
 package com.edofic.yodalib.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.util.List;
 
 /**
  * User: andraz
@@ -26,7 +29,8 @@ import android.database.sqlite.SQLiteDatabase;
 public class Datasource<T> {
     private SQLiteDatabase db;
     private final DatabaseOpenHelper helper;
-    private Class c;
+    private final Class c;
+    private final TableMetaData metaData;
 
     /**
      * creates new datasource (one table/db)
@@ -36,6 +40,7 @@ public class Datasource<T> {
      */
     public Datasource(Context context, Class c) {
         this.c = c;
+        metaData = MetaDataFactory.get(c);
         helper = new DatabaseOpenHelper(context, c);
     }
 
@@ -43,16 +48,61 @@ public class Datasource<T> {
         db = helper.getWritableDatabase();
     }
 
-    public void close() {
+    private void close() {
         db.close();
     }
 
-    //insert
-    //get
-    //get all
-    //delete
-
+    /**
+     * inserts new entry to the db or updates existing one
+     * update is performed if field(s) with autoincrement are set
+     *
+     * @param t
+     */
     public void insert(T t) {
+        open();
 
+        ContentValues values = new ContentValues();
+        for (ColumnMetaData column : metaData.getColumnsNoIncrement()) {
+            column.get(values, t);
+        }
+
+        boolean update = false;
+        StringBuilder whereClause = new StringBuilder();
+        for (ColumnMetaData column : metaData.getColumnsAutoincrement()) {
+            if (column.isSet(t)) {
+                column.get(values, t);
+                final String name = column.getName();
+                if (update) {
+                    whereClause.append(", ");
+                }
+                whereClause.append(name);
+                whereClause.append(" = ");
+                whereClause.append(values.get(name).toString());
+                update = true;
+            }
+        }
+
+        if (!update) {
+            db.insert(metaData.getTableName(), null, values);
+        } else {
+            db.update(metaData.getTableName(), values,
+                    whereClause.toString(), null);
+        }
+
+        close();
+    }
+
+    public T get(String whereClause) {
+        //todo
+        return null;
+    }
+
+    public List<T> getAll() {
+        //todo
+        return null;
+    }
+
+    public void delete(String whereClause) {
+        //todo
     }
 }

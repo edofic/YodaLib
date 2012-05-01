@@ -15,6 +15,7 @@
 
 package com.edofic.yodalib.database;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 
 import java.lang.reflect.Field;
@@ -95,5 +96,47 @@ class ColumnMetaData {
         } catch (IllegalAccessException e) {
             throw new UnsupportedOperationException("illegal acces should not be happening");
         }
+    }
+
+    public void get(ContentValues values, Object o) {
+        try {
+            switch (type) {
+                case INTEGER:
+                    values.put(name, (Long) field.get(o));
+                    break;
+                case FLOAT:
+                    values.put(name, (Double) field.get(o));
+                    break;
+                case STRING:
+                    values.put(name, (String) field.get(o));
+                    break;
+                case BLOB:
+                    throw new UnsupportedOperationException("blobs are not implemented yet");
+            }
+        } catch (IllegalAccessException e) {
+            throw new UnsupportedOperationException("illegal acces should not be happening");
+        }
+    }
+
+    public boolean isSet(Object o) {
+        try {
+            switch (type) {
+                case INTEGER:
+                    if ((Long) field.get(o) == 0) return false;
+                    else return true;
+                case FLOAT:
+                    if ((Double) field.get(o) == 0) return false;
+                    else return true;
+                case STRING:
+                    String s = (String) field.get(o);
+                    if (s == null || s.equals("")) return false;
+                    else return true;
+                case BLOB:
+                    throw new UnsupportedOperationException("blobs are not implemented yet");
+            }
+        } catch (IllegalAccessException e) {
+            throw new UnsupportedOperationException("illegal acces should not be happening");
+        }
+        return false;
     }
 }
