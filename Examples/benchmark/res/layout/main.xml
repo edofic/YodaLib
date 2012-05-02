@@ -6,21 +6,63 @@
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Hello World, MainActivity"/>
-    <Button
-            android:layout_width="wrap_content"
+            android:text="manual"/>
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+        <Button
             android:layout_height="wrap_content"
-            android:text="write 100"
-            android:onClick="insert100"/>
-    <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="read all"
-            android:onClick="readAll"/>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="clear"
-            android:onClick="clear"/>
+            android:onClick="clearManual"/>
+        <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="insert"
+                android:onClick="insertSingleManual"/>
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="batch"
+            android:onClick="insertBatchManual"/>
+        <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="read"
+                android:onClick="loadAllManual"/>
+
+    </LinearLayout>
+
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="generated"/>
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+        <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="clear"
+                android:onClick="clear"/>
+        <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="insert"
+                android:onClick="insertSingle"/>
+        <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="batch"
+                android:onClick="insertBatch"/>
+        <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="read"
+                android:onClick="loadAll"/>
+
+    </LinearLayout>
+
 </LinearLayout>
 

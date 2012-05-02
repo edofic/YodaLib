@@ -8,55 +8,100 @@ import com.edofic.yodalib.database.Datasource;
 
 import java.util.List;
 
+/**
+ * User: andraz
+ * Date: 5/2/12
+ * Time: 12:41 PM
+ */
 public class MainActivity extends Activity {
-    /**
-     * Called when the activity is first created.
-     */
+    private DatasourceManual dm;
+    private Datasource<Person> da;
+    private static final int BATCH_REPS = 100;
+
+    /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        dm = new DatasourceManual(this);
+        da = new Datasource<Person>(this, Person.class);
     }
 
-    public void readAll(View v) {
-        Datasource<TestClass> db = new Datasource<TestClass>(this, TestClass.class);
-
-        List<TestClass> all;
+    public void insertSingleManual(View v) {
         long start = System.currentTimeMillis();
-        all = db.getAll();
+        dm.open();
+        dm.insertPerson(new Person(0, "manny", 133));
+        dm.close();
         long stop = System.currentTimeMillis();
         Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
     }
 
-    public void insert100(View v) {
-        Datasource<TestClass> db = new Datasource<TestClass>(this, TestClass.class);
+    public void insertBatchManual(View v) {
         long start = System.currentTimeMillis();
-        try {
-            db.beginTransaction();
-            for (int i = 0; i < 25; i++) {
-                db.insert(new TestClass(0, 12.3, "bla"));
-                db.insert(new TestClass(0, 1.3, "blabla"));
-                db.insert(new TestClass(0, 13.37, "works"));
-                db.insert(new TestClass(0, 1337, "workss"));
-            }
-            db.transactionSuccessful();
-        } catch (Exception e) {
-        } finally {
-            db.endTransaction();
-            db.close();
+        Person p = new Person(0, "manny batch", 12);
+        dm.open();
+        for(int i=0; i<BATCH_REPS; i++) {
+            dm.insertPerson(p);
         }
+        dm.close();
         long stop = System.currentTimeMillis();
-        Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+    }
 
+    public void clearManual(View v) {
+        long start = System.currentTimeMillis();
+        dm.open();
+        dm.clear();
+        dm.close();
+        long stop = System.currentTimeMillis();
+        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+    }
+
+    public void loadAllManual(View v) {
+        long start = System.currentTimeMillis();
+        dm.open();
+        List<Person> list = dm.getAllPersons();
+        dm.close();
+        long stop = System.currentTimeMillis();
+        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+    }
+
+    /*************************************/
+
+    public void insertSingle(View v) {
+        long start = System.currentTimeMillis();
+        da.insertSingle(new Person(0, "auto", -1));
+        long stop = System.currentTimeMillis();
+        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+    }
+
+    public void insertBatch(View v) {
+        long start = System.currentTimeMillis();
+        da.beginTransaction();
+        Person p = new Person(0, "auto batch", 12);
+        for(int i=0; i<BATCH_REPS; i++) {
+            da.insert(p);
+        }
+        da.transactionSuccessful();
+        da.endTransaction();
+        da.close();
+        long stop = System.currentTimeMillis();
+        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
     }
 
     public void clear(View v) {
-        Datasource<TestClass> db = new Datasource<TestClass>(this, TestClass.class);
-
         long start = System.currentTimeMillis();
-        db.clear();
+        da.clear();
         long stop = System.currentTimeMillis();
-        Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+    }
+
+    public void loadAll(View v) {
+        long start = System.currentTimeMillis();
+        List<Person> all = da.getAll();
+        long stop = System.currentTimeMillis();
+        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
     }
 }
