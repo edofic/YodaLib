@@ -94,6 +94,12 @@ public class Datasource<T> {
         close();
     }
 
+    /**
+     * selectively load table
+     *
+     * @param whereClause where clause formatted for SQLite without the "WHERE"
+     * @return list of elements that satisfy the predicate
+     */
     public List<T> get(String whereClause) {
         open();
         ArrayList<T> items = new ArrayList<T>();
@@ -110,11 +116,30 @@ public class Datasource<T> {
         return items;
     }
 
+    /**
+     * load whole table
+     *
+     * @return list of all elements
+     */
     public List<T> getAll() {
         return get(null);
     }
 
+    /**
+     * selectively remove elements
+     *
+     * @param whereClause where clause formatted for SQLite without the "WHERE"
+     */
     public void delete(String whereClause) {
-        //todo
+        open();
+        db.delete(metaData.getTableName(), whereClause, null);
+        close();
+    }
+
+    /**
+     * clear the whole table
+     */
+    public void clear() {
+        delete(null);
     }
 }
