@@ -1,4 +1,8 @@
-YodaLib
-=======
+YodaLib version 0.1
+===================
 
 android library project with some reusable components
+
+currently contains:
+    - very simple database datasource with automatic code generation
+        you only add some annotations to your class and you're ready to go
