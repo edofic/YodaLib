@@ -1,4 +1,11 @@
+.idea
+out
+Examples/benchmark/local.properties
+Examples/benchmark/bin
+Examples/benchmark/gen
+Examples/benchmark/benchmark.iml
 Lib/local.properties
 Lib/bin
 Lib/gen
+Lib/Lib.iml
 
