@@ -46,23 +46,59 @@ public class Datasource<T> {
         helper = new DatabaseOpenHelper(context, c);
     }
 
-    private void open() {
+    /**
+     * gets writable database
+     */
+    public void open() {
         db = helper.getWritableDatabase();
     }
 
-    private void close() {
+    /**
+     * closes database connection
+     */
+    public void close() {
         db.close();
+    }
+
+    /**
+     * make sure that database is open and transaction is in progress
+     * does not nest transactions!
+     */
+    public void beginTransaction() {
+        if (db == null || !db.isOpen()) {
+            open();
+        }
+        if (!db.inTransaction()) {
+            db.beginTransaction();
+        }
+    }
+
+    /**
+     * is db is open and transaction is in progress, set it to successful
+     */
+    public void transactionSuccessful() {
+        if (db.isOpen() && db.inTransaction()) {
+            db.setTransactionSuccessful();
+        }
+    }
+
+    /**
+     * is db is open and transaction is in progress, end it
+     */
+    public void endTransaction() {
+        if (db.isOpen() && db.inTransaction()) {
+            db.endTransaction();
+        }
     }
 
     /**
      * inserts new entry to the db or updates existing one
      * update is performed if field(s) with autoincrement are set
+     * *YOU HAVE TO MANUALLY OPEN AND CLOSE THE DB*
      *
      * @param t
      */
     public void insert(T t) {
-        open();
-
         ContentValues values = new ContentValues();
         for (ColumnMetaData column : metaData.getColumnsNoIncrement()) {
             column.get(values, t);
@@ -90,7 +126,17 @@ public class Datasource<T> {
             db.update(metaData.getTableName(), values,
                     whereClause.toString(), null);
         }
+    }
 
+    /**
+     * convenience method for inserting single element
+     * see docs for insert
+     *
+     * @param t
+     */
+    public void insertSingle(T t) {
+        open();
+        insert(t);
         close();
     }
 

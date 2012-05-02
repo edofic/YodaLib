@@ -118,10 +118,22 @@ class TableMetaData {
         return version;
     }
 
+    /**
+     * sort fields by position attribute in column annotation
+     * or if not available or equal, alphabetically.
+     */
     private class FieldComparator implements Comparator<Field> {
         @Override
-        public int compare(Field field, Field field1) {
-            return field.getName().compareTo(field1.getName());
+        public int compare(Field field1, Field field2) {
+            Column c1 = field1.getAnnotation(Column.class);
+            Column c2 = field2.getAnnotation(Column.class);
+            if (c1 != null && c2 != null) {
+                int delta = c1.position() - c2.position();
+                if (delta < 0) return -1;
+                if (delta > 0) return +1;
+            }
+
+            return field1.getName().compareTo(field2.getName());
         }
     }
 }

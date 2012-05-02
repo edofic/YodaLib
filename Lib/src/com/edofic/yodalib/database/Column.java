@@ -24,13 +24,41 @@ import java.lang.annotation.Target;
  * User: andraz
  * Date: 4/28/12
  * Time: 1:20 PM
+ * Specifies the following field as a column in a table
+ * Only name is mandatory, primary key and autoIncrement default to false
+ * and position defaults to 1 for all columns which means alphabetic sorting.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Column {
+    /**
+     * specifiy column name for use in queries (mandatory)
+     *
+     * @return column name
+     */
     public String name();
 
+    /**
+     * toggles the "primary key" in sql create
+     * defaults to false
+     *
+     * @return is this column primary key
+     */
     public boolean primaryKey() default false;
 
+    /**
+     * toggles the "autoincrement" in sql create
+     * is used to determine if insertion is an update or new insertion
+     * defaults to false
+     *
+     * @return is this column primary key
+     */
     public boolean autoIncrement() default false;
+
+    /**
+     * columns in table are sorted by this value
+     *
+     * @return column position
+     */
+    public int position() default 1;
 }

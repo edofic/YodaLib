@@ -24,12 +24,28 @@ import java.lang.annotation.Target;
  * User: andraz
  * Date: 4/28/12
  * Time: 1:09 PM
+ * Specify the following class as a table in database.
+ * Current limitation is one table per database.
+ * Class must be public and provide no-parameter constructor,
+ * or else operations will silently fail at runtime
+ * columns in the table are sorted by the position attribute
+ * or alphabetically if not provided
  */
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Table {
+    /**
+     * specifiy table name for use in queries (mandatory)
+     *
+     * @return table name
+     */
     public String name();
 
+    /**
+     * specifiy database version for open helper, so db upgrades
+     * can be performed
+     *
+     * @return database version
+     */
     public int version() default 1;
 }
