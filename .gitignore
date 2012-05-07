@@ -1,11 +1,16 @@
 .idea
 out
-Examples/benchmark/local.properties
-Examples/benchmark/bin
-Examples/benchmark/gen
-Examples/benchmark/benchmark.iml
+Examples/dbBenchmark/local.properties
+Examples/dbBenchmark/bin
+Examples/dbBenchmark/gen
+Examples/dbBenchmark/dbBenchmark.iml
+Examples/demoSmall/local.properties
+Examples/demoSmall/bin
+Examples/demoSmall/gen
+Examples/demoSmall/demoSmall.iml
 Lib/local.properties
 Lib/bin
 Lib/gen
 Lib/Lib.iml
+
 
