@@ -122,15 +122,12 @@ class ColumnMetaData {
         try {
             switch (type) {
                 case INTEGER:
-                    if ((Long) field.get(o) == 0) return false;
-                    else return true;
+                    return (Long) field.get(o) != 0;
                 case FLOAT:
-                    if ((Double) field.get(o) == 0) return false;
-                    else return true;
+                    return (Double) field.get(o) != 0;
                 case STRING:
                     String s = (String) field.get(o);
-                    if (s == null || s.equals("")) return false;
-                    else return true;
+                    return !(s == null || s.equals(""));
                 case BLOB:
                     throw new UnsupportedOperationException("blobs are not implemented yet");
             }

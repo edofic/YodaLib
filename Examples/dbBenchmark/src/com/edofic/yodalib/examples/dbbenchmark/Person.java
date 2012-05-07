@@ -1,4 +1,4 @@
-package com.edofic.yodalib.examples.benchmark;
+package com.edofic.yodalib.examples.dbbenchmark;
 
 import com.edofic.yodalib.database.Column;
 import com.edofic.yodalib.database.Table;
@@ -17,7 +17,8 @@ public class Person {
     @Column(name = "debt", position = 3)
     private String name;
 
-    public Person() {}
+    public Person() {
+    }
 
     public Person(long id, String name, long debt) {
         this.debt = debt;

@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * Time: 4:26 PM
  */
 class DatabaseOpenHelper extends SQLiteOpenHelper {
-    private TableMetaData tableMetaData;
+    private final TableMetaData tableMetaData;
     private String create;
 
     public DatabaseOpenHelper(Context context, Class c) {

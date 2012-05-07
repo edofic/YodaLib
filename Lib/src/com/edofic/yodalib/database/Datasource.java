@@ -37,7 +37,7 @@ public class Datasource<T> {
     /**
      * creates new datasource (one table/db)
      *
-     * @param context
+     * @param context context
      * @param c       must be equal to T
      */
     public Datasource(Context context, Class c) {
@@ -96,7 +96,7 @@ public class Datasource<T> {
      * update is performed if field(s) with autoincrement are set
      * *YOU HAVE TO MANUALLY OPEN AND CLOSE THE DB*
      *
-     * @param t
+     * @param t object to insert
      */
     public void insert(T t) {
         ContentValues values = new ContentValues();
@@ -132,7 +132,7 @@ public class Datasource<T> {
      * convenience method for inserting single element
      * see docs for insert
      *
-     * @param t
+     * @param t item to insert
      */
     public void insertSingle(T t) {
         open();
@@ -146,6 +146,7 @@ public class Datasource<T> {
      * @param whereClause where clause formatted for SQLite without the "WHERE"
      * @return list of elements that satisfy the predicate
      */
+    @SuppressWarnings("unchecked") //explained in place
     public List<T> get(String whereClause) {
         open();
         ArrayList<T> items = new ArrayList<T>();
@@ -154,7 +155,9 @@ public class Datasource<T> {
                         null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            items.add((T) metaData.cursorToObject(cursor));
+            //noinspection unchecked
+            //cursor to object generates object from constructor
+            items.add((T) metaData.cursorToObject(cursor));     //of T, so we are in fact type safe
             cursor.moveToNext();
         }
         cursor.close();

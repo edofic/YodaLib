@@ -1,4 +1,4 @@
-package com.edofic.yodalib.examples.benchmark;
+package com.edofic.yodalib.examples.dbbenchmark;
 
 import android.content.ContentValues;
 import android.content.Context;

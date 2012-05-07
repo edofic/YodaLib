@@ -52,7 +52,7 @@ class TableMetaData {
         version = table.version();
 
         try {
-            constructor = c.getDeclaredConstructor(new Class[0]);
+            constructor = c.getDeclaredConstructor();
             constructor.setAccessible(true);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -83,9 +83,9 @@ class TableMetaData {
 
     public Object cursorToObject(Cursor cursor) {
         try {
-            Object o = constructor.newInstance(null);
-            for (int i = 0; i < columns.size(); i++) {
-                columns.get(i).set(cursor, o);
+            Object o = constructor.newInstance((Object[]) null);
+            for (ColumnMetaData column : columns) {
+                column.set(cursor, o);
             }
             return o;
         } catch (Exception e) {

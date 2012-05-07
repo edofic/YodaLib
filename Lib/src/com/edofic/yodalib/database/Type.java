@@ -28,8 +28,8 @@ enum Type {
     STRING(3, "text"),
     BLOB(4, "blob");
 
-    private int value;
-    private String text;
+    private final int value;
+    private final String text;
 
     Type(int value, String text) {
         this.value = value;

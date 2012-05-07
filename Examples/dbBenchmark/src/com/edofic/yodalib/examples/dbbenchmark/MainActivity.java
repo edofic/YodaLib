@@ -1,4 +1,4 @@
-package com.edofic.yodalib.examples.benchmark;
+package com.edofic.yodalib.examples.dbbenchmark;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -18,10 +18,11 @@ public class MainActivity extends Activity {
     private Datasource<Person> da;
     private static final int BATCH_REPS = 100;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
@@ -42,12 +43,12 @@ public class MainActivity extends Activity {
         long start = System.currentTimeMillis();
         Person p = new Person(0, "manny batch", 12);
         dm.open();
-        for(int i=0; i<BATCH_REPS; i++) {
+        for (int i = 0; i < BATCH_REPS; i++) {
             dm.insertPerson(p);
         }
         dm.close();
         long stop = System.currentTimeMillis();
-        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
     }
 
     public void clearManual(View v) {
@@ -56,7 +57,7 @@ public class MainActivity extends Activity {
         dm.clear();
         dm.close();
         long stop = System.currentTimeMillis();
-        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
     }
 
     public void loadAllManual(View v) {
@@ -65,43 +66,45 @@ public class MainActivity extends Activity {
         List<Person> list = dm.getAllPersons();
         dm.close();
         long stop = System.currentTimeMillis();
-        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
     }
 
-    /*************************************/
+    /**
+     * *********************************
+     */
 
     public void insertSingle(View v) {
         long start = System.currentTimeMillis();
         da.insertSingle(new Person(0, "auto", -1));
         long stop = System.currentTimeMillis();
-        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
     }
 
     public void insertBatch(View v) {
         long start = System.currentTimeMillis();
         da.beginTransaction();
         Person p = new Person(0, "auto batch", 12);
-        for(int i=0; i<BATCH_REPS; i++) {
+        for (int i = 0; i < BATCH_REPS; i++) {
             da.insert(p);
         }
         da.transactionSuccessful();
         da.endTransaction();
         da.close();
         long stop = System.currentTimeMillis();
-        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
     }
 
     public void clear(View v) {
         long start = System.currentTimeMillis();
         da.clear();
         long stop = System.currentTimeMillis();
-        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
     }
 
     public void loadAll(View v) {
         long start = System.currentTimeMillis();
         List<Person> all = da.getAll();
         long stop = System.currentTimeMillis();
-        Toast.makeText(this, (stop-start)+"ms", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
     }
 }

@@ -11,20 +11,20 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="clear"
-            android:onClick="clearManual"/>
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="clear"
+                android:onClick="clearManual"/>
         <Button
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:text="insert"
                 android:onClick="insertSingleManual"/>
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="batch"
-            android:onClick="insertBatchManual"/>
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="batch"
+                android:onClick="insertBatchManual"/>
         <Button
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"

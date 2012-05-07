@@ -1,4 +1,4 @@
-package com.edofic.yodalib.examples.benchmark;
+package com.edofic.yodalib.examples.dbbenchmark;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
