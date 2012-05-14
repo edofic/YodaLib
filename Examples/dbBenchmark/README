@@ -1,6 +1,0 @@
-This application contains a sample class Person and two ways to persist it
-on the database. 
-Classes DatasourceManual and DbHelper are for "manual" work with database, 
-annotations on Person and its fields are for automatic datasource generation.
-
-Yay, we replaced 131 lines of bolierplate with four annotations. :)
