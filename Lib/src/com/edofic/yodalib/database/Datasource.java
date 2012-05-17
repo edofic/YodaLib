@@ -38,16 +38,30 @@ public class Datasource<T> {
      * creates new datasource (one table/db)
      *
      * @param context context
-     * @param c       must be equal to T
+     * @param c       must be equal to T, limitation because of type erasure
      */
     public Datasource(Context context, Class c) {
         this(new SingleTableProxy(context,c), c);
     }
 
+    /**
+     * creates new datasource for use in a database (multiple tables)
+     *
+     * @param proxy usually the parent database. for 1 table/db usage use context,class constructor
+     * @param c must be equal to T, limitation because of type erasure
+     */
     public Datasource(Proxy proxy, Class c) {
         this.c = c;
         this.metaData = MetaDataFactory.get(c);
         this.proxy = proxy;
+    }
+
+    public TableMetaData getMetaData() {
+        return metaData;
+    }
+
+    public Class getType() {
+        return c;
     }
 
     /**
@@ -161,7 +175,8 @@ public class Datasource<T> {
         while (!cursor.isAfterLast()) {
             //noinspection unchecked
             //cursor to object generates object from constructor
-            items.add((T) metaData.cursorToObject(cursor));     //of T, so we are in fact type safe
+            //of T, so we are in fact type safe
+            items.add((T) metaData.cursorToObject(cursor));
             cursor.moveToNext();
         }
         cursor.close();
@@ -202,7 +217,9 @@ public class Datasource<T> {
 
         private SingleTableProxy(Context context, Class c) {
             this.mContext=context;
-            helper = new DatabaseOpenHelper(context,c);
+            TableMetaData meta = MetaDataFactory.get(c);
+            helper = new DatabaseOpenHelper(context, new TableMetaData[]{meta},
+                    meta.getTableName()+".db", meta.getVersion());
         }
 
         @Override

@@ -28,44 +28,54 @@ import java.util.ArrayList;
  * Time: 4:26 PM
  */
 class DatabaseOpenHelper extends SQLiteOpenHelper {
-    private final TableMetaData tableMetaData;
-    private String create;
+    private final TableMetaData[] metaData;
+    private String[] create;
 
-    public DatabaseOpenHelper(Context context, Class c) {
-        super(context, MetaDataFactory.get(c).getTableName() + ".db", null, MetaDataFactory.get(c).getVersion());
-        tableMetaData = MetaDataFactory.get(c); //factory caches metadata so this isn't too costly
+    public DatabaseOpenHelper(Context context, TableMetaData[] meta, String name, int version) {
+        super(context, name, null, version);
+        metaData = meta;
+        if(meta==null) {
+            throw new IllegalArgumentException("You must provide meta data in order to create a db");
+        }
         buildScripts();
     }
 
     private void buildScripts() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("create table ");
-        sb.append(tableMetaData.getTableName());
-        sb.append(" ( ");
-        final ArrayList<ColumnMetaData> columns = tableMetaData.getColumns();
-        for (int i = 0; i < columns.size(); i++) {
-            final ColumnMetaData column = columns.get(i);
-            sb.append(column.getName());
-            sb.append(" ");
-            sb.append(column.getType().getText());
-            if (column.isPrimary()) {
-                sb.append(" primary key");
+        create = new String[metaData.length];
+        for (int index = 0; index < metaData.length; index++) {
+            TableMetaData tableMetaData = metaData[index];
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("create table ");
+            sb.append(tableMetaData.getTableName());
+            sb.append(" ( ");
+            final ArrayList<ColumnMetaData> columns = tableMetaData.getColumns();
+            for (int i = 0; i < columns.size(); i++) {
+                final ColumnMetaData column = columns.get(i);
+                sb.append(column.getName());
+                sb.append(" ");
+                sb.append(column.getType().getText());
+                if (column.isPrimary()) {
+                    sb.append(" primary key");
+                }
+                if (column.isAutoincrement()) {
+                    sb.append(" autoincrement");
+                }
+                if (i < columns.size() - 1) {
+                    sb.append(",");
+                }
+                sb.append(" ");
             }
-            if (column.isAutoincrement()) {
-                sb.append(" autoincrement");
-            }
-            if (i < columns.size() - 1) {
-                sb.append(",");
-            }
-            sb.append(" ");
+            sb.append(");");
+            create[index] = sb.toString();
         }
-        sb.append(");");
-        create = sb.toString();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(create);
+        for (String s : create) {
+            db.execSQL(s);
+        }
     }
 
     @Override
@@ -73,7 +83,9 @@ class DatabaseOpenHelper extends SQLiteOpenHelper {
         Log.w(DatabaseOpenHelper.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + tableMetaData.getTableName());
+        for (TableMetaData tableMetaData : metaData) {
+            db.execSQL("DROP TABLE IF EXISTS " + tableMetaData.getTableName());
+        }
         onCreate(db);
     }
 }

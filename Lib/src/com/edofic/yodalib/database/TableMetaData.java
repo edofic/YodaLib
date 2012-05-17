@@ -49,6 +49,13 @@ class TableMetaData {
         }
         this.c = c;
         tableName = table.name();
+        if(tableName.equals("")) {
+            tableName = c.getSimpleName();
+            if(tableName.equals("")) {
+                throw new IllegalArgumentException("if you are using anonymous classes you must provide name in the annotation");
+            }
+        }
+
         version = table.version();
 
         try {
@@ -56,7 +63,7 @@ class TableMetaData {
             constructor.setAccessible(true);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-            //TODO implement
+            throw new IllegalArgumentException("Provided class does not have a parameterless constructor");
         }
 
         Field[] fields = c.getDeclaredFields();

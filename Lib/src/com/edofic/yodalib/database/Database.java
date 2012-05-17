@@ -18,16 +18,37 @@ package com.edofic.yodalib.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * User: andraz
  * Date: 5/17/12
  * Time: 1:24 PM
+ *
+ * For using multiple tables you should extend this class
+ * Inside you should put several datasources annotated with TableDatasource
+ * that's mostly it. see examples
  */
-public class Database implements Proxy {
-    private Context mContext;
+public abstract class Database implements Proxy {
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    protected @interface TableDatasource {}
 
-    public Database(Context context) {
+    private Context mContext;
+    private DatabaseOpenHelper helper;
+    private String mName;
+    private int mVersion;
+
+    public Database(Context context, String name, int version) {
         this.mContext = context;
+        this.mName = name;
+        this.mVersion = version;
     }
 
     @Override
@@ -37,6 +58,33 @@ public class Database implements Proxy {
 
     @Override
     public SQLiteDatabase getWritableDatabase() {
-        return null;//TODO implement
+        return getHelper().getWritableDatabase();
+    }
+
+    private DatabaseOpenHelper getHelper() {
+        if(helper==null) {
+            List<TableMetaData> metaDataList = new ArrayList<TableMetaData>();
+            for(Field field : this.getClass().getDeclaredFields()) {
+                TableDatasource t = field.getAnnotation(TableDatasource.class);
+                if(t==null) {
+                    continue;
+                }
+
+                try {
+                    field.setAccessible(true);
+                    Datasource datasource = (Datasource) field.get(this);
+                    TableMetaData metaData = MetaDataFactory.get(datasource.getType());
+                    metaDataList.add(metaData);
+                } catch (IllegalAccessException e) {
+                    throw new AssertionError();
+                } catch (ClassCastException e) {
+                    throw new IllegalArgumentException("annotated class should extend datasource");
+                }
+            }
+
+            TableMetaData[] meta = metaDataList.toArray(new TableMetaData[metaDataList.size()]);
+            helper = new DatabaseOpenHelper(mContext, meta, mName, mVersion);
+        }
+        return helper;
     }
 }

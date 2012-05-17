@@ -25,18 +25,18 @@ import java.lang.annotation.Target;
  * Date: 4/28/12
  * Time: 1:20 PM
  * Specifies the following field as a column in a table
- * Only name is mandatory, primary key and autoIncrement default to false
+ * Name defaults to field name, primary key and autoIncrement default to false
  * and position defaults to 1 for all columns which means alphabetic sorting.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Column {
     /**
-     * specifiy column name for use in queries (mandatory)
+     * specifiy column name for use in queries
      *
      * @return column name
      */
-    public String name();
+    public String name() default "";
 
     /**
      * toggles the "primary key" in sql create

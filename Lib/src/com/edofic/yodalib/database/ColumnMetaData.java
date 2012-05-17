@@ -44,6 +44,9 @@ class ColumnMetaData {
 
         this.index = index;
         name = column.name();
+        if(name.equals("")) {
+            name = field.getName();
+        }
         primary = column.primaryKey();
         autoincrement = column.autoIncrement();
 

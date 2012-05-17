@@ -25,7 +25,6 @@ import java.lang.annotation.Target;
  * Date: 4/28/12
  * Time: 1:09 PM
  * Specify the following class as a table in database.
- * Current limitation is one table per database.
  * Class must be public and provide no-parameter constructor,
  * or else operations will silently fail at runtime
  * columns in the table are sorted by the position attribute
@@ -39,7 +38,7 @@ public @interface Table {
      *
      * @return table name
      */
-    public String name();
+    public String name() default "";
 
     /**
      * specifiy database version for open helper, so db upgrades
