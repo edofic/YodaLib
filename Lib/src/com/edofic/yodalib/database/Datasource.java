@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class Datasource<T> {
     private SQLiteDatabase db;
-    private final DatabaseOpenHelper helper;
+    private final Proxy proxy;
     private final Class c;
     private final TableMetaData metaData;
 
@@ -41,16 +41,20 @@ public class Datasource<T> {
      * @param c       must be equal to T
      */
     public Datasource(Context context, Class c) {
+        this(new SingleTableProxy(context,c), c);
+    }
+
+    public Datasource(Proxy proxy, Class c) {
         this.c = c;
-        metaData = MetaDataFactory.get(c);
-        helper = new DatabaseOpenHelper(context, c);
+        this.metaData = MetaDataFactory.get(c);
+        this.proxy = proxy;
     }
 
     /**
      * gets writable database
      */
     public void open() {
-        db = helper.getWritableDatabase();
+        db = proxy.getWritableDatabase();
     }
 
     /**
@@ -190,5 +194,25 @@ public class Datasource<T> {
      */
     public void clear() {
         delete(null);
+    }
+
+    private static class SingleTableProxy implements Proxy {
+        private Context mContext;
+        private DatabaseOpenHelper helper;
+
+        private SingleTableProxy(Context context, Class c) {
+            this.mContext=context;
+            helper = new DatabaseOpenHelper(context,c);
+        }
+
+        @Override
+        public Context getContext() {
+            return mContext;
+        }
+
+        @Override
+        public SQLiteDatabase getWritableDatabase() {
+            return helper.getWritableDatabase();
+        }
     }
 }
