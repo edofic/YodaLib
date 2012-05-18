@@ -1,5 +1,2 @@
-multiple tables per db
-    -type safety(exceptions)
+type safety(exceptions)
 
-raw queries
-    -cursor to object and query to list methods
