@@ -41,14 +41,14 @@ public class Datasource<T> {
      * @param c       must be equal to T, limitation because of type erasure
      */
     public Datasource(Context context, Class c) {
-        this(new SingleTableProxy(context,c), c);
+        this(new SingleTableProxy(context, c), c);
     }
 
     /**
      * creates new datasource for use in a database (multiple tables)
      *
      * @param proxy usually the parent database. for 1 table/db usage use context,class constructor
-     * @param c must be equal to T, limitation because of type erasure
+     * @param c     must be equal to T, limitation because of type erasure
      */
     public Datasource(Proxy proxy, Class c) {
         this.c = c;
@@ -194,6 +194,23 @@ public class Datasource<T> {
     }
 
     /**
+     * Wrapper for sqlite database query
+     *
+     * @param distinct  adds the Distintc keyword to query
+     * @param columns   array of column names
+     * @param selection where clause
+     * @param groupBy   group by clause
+     * @param having    having clause
+     * @param orderBy   order by clause
+     * @param limit     limit clause
+     * @return
+     */
+    public Cursor query(boolean distinct, String[] columns, String selection, String groupBy,
+                        String having, String orderBy, String limit) {
+        return db.query(distinct, metaData.getTableName(), columns, selection, null, groupBy, having, orderBy, limit);
+    }
+
+    /**
      * selectively remove elements
      *
      * @param whereClause where clause formatted for SQLite without the "WHERE"
@@ -216,10 +233,10 @@ public class Datasource<T> {
         private DatabaseOpenHelper helper;
 
         private SingleTableProxy(Context context, Class c) {
-            this.mContext=context;
+            this.mContext = context;
             TableMetaData meta = MetaDataFactory.get(c);
             helper = new DatabaseOpenHelper(context, new TableMetaData[]{meta},
-                    meta.getTableName()+".db", meta.getVersion());
+                    meta.getTableName() + ".db", meta.getVersion());
         }
 
         @Override
