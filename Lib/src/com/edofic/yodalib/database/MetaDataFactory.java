@@ -24,7 +24,7 @@ import java.util.Map;
  * Time: 1:01 PM
  * Static factory of meta data for classes with internal pool for caching
  */
-class MetaDataFactory {
+public class MetaDataFactory {
     private static final Map<Class, TableMetaData> data = new HashMap<Class, TableMetaData>();
 
     public static TableMetaData get(Class c) {

@@ -31,7 +31,7 @@ import java.util.Comparator;
  * contains all the data needed to construct queries and methods to fill objects with results
  * mapping to columns is with respect to alphabetic order of fields
  */
-class TableMetaData {
+public class TableMetaData {
     private Class c;
     private String tableName;
     private int version;
@@ -49,9 +49,9 @@ class TableMetaData {
         }
         this.c = c;
         tableName = table.name();
-        if(tableName.equals("")) {
+        if (tableName.equals("")) {
             tableName = c.getSimpleName();
-            if(tableName.equals("")) {
+            if (tableName.equals("")) {
                 throw new IllegalArgumentException("if you are using anonymous classes you must provide name in the annotation");
             }
         }
