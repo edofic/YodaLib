@@ -115,8 +115,9 @@ public class Datasource<T> {
      * *YOU HAVE TO MANUALLY OPEN AND CLOSE THE DB*
      *
      * @param t object to insert
+     * @return new id if insertion or numbers of row affected if update
      */
-    public void insert(T t) {
+    public long insert(T t) {
         ContentValues values = new ContentValues();
         for (ColumnMetaData column : metaData.getColumnsNoIncrement()) {
             column.get(values, t);
@@ -138,12 +139,14 @@ public class Datasource<T> {
             }
         }
 
+        long id;
         if (!update) {
-            db.insert(metaData.getTableName(), null, values);
+            id=db.insert(metaData.getTableName(), null, values);
         } else {
-            db.update(metaData.getTableName(), values,
+            id=db.update(metaData.getTableName(), values,
                     whereClause.toString(), null);
         }
+        return id;
     }
 
     /**
@@ -151,11 +154,13 @@ public class Datasource<T> {
      * see docs for insert
      *
      * @param t item to insert
+     * @return new id if insertion or numbers of row affected if update
      */
-    public void insertSingle(T t) {
+    public long insertSingle(T t) {
         open();
-        insert(t);
+        long id=insert(t);
         close();
+        return id;
     }
 
     /**
