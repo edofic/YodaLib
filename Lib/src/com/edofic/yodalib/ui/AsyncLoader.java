@@ -19,8 +19,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import com.edofic.yodalib.R;
 
 /**
  * User: andraz
@@ -29,14 +30,15 @@ import android.widget.RelativeLayout;
  */
 public class AsyncLoader extends RelativeLayout {
     private AsyncTask task;
-    private ImageView progress;
+    private View progress;
 
     public AsyncLoader(Context context, AttributeSet attrs) {
         super(context, attrs);
-        progress = new ImageView(getContext());
-        RelativeLayout.LayoutParams lp = new LayoutParams(progress.getLayoutParams());
+        progress = inflate(getContext(), R.layout.loading, null);
+        LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.CENTER_IN_PARENT);
-        this.addView(progress, lp);
+        progress.setLayoutParams(lp);
+        addView(progress);
     }
 
     private void setChildrenVisibility(boolean visible) {
