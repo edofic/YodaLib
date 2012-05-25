@@ -3,12 +3,22 @@ YodaLib version 0.2
 
 android library project with some reusable components
 
+NOTE: taged versions SHOULD be backwards compatible(though i don't guarantee)
+
 currently contains:
     - very simple database datasource with automatic code generation
         you only add some annotations to your class and you're ready to go
+        
+    - simple database
+        you extend the Database class and put in some annotated datasource
+        they can also be private and accesed through forwarding methods
 
     - managed locator. aggregates and filters location updates and notifies 
     	your handler
+    	
+	- asyncloader layout
+	    extended relative layout to make loading content through AsyncTasks 
+	    easier.
 
 
 Feature requests/suggestions are appreciated, but pull requests are even better.
