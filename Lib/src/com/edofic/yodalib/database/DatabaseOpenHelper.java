@@ -34,7 +34,7 @@ class DatabaseOpenHelper extends SQLiteOpenHelper {
     public DatabaseOpenHelper(Context context, TableMetaData[] meta, String name, int version) {
         super(context, name, null, version);
         metaData = meta;
-        if(meta==null) {
+        if (meta == null) {
             throw new IllegalArgumentException("You must provide meta data in order to create a db");
         }
         buildScripts();

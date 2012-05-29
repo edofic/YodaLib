@@ -44,7 +44,7 @@ class ColumnMetaData {
 
         this.index = index;
         name = column.name();
-        if(name.equals("")) {
+        if (name.equals("")) {
             name = field.getName();
         }
         primary = column.primaryKey();

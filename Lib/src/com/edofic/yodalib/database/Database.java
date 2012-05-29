@@ -30,7 +30,7 @@ import java.util.List;
  * User: andraz
  * Date: 5/17/12
  * Time: 1:24 PM
- *
+ * <p/>
  * For using multiple tables you should extend this class
  * Inside you should put several datasources annotated with TableDatasource
  * that's mostly it. see examples
@@ -38,7 +38,8 @@ import java.util.List;
 public abstract class Database implements Proxy {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    protected @interface TableDatasource {}
+    protected @interface TableDatasource {
+    }
 
     private Context mContext;
     private DatabaseOpenHelper helper;
@@ -62,11 +63,11 @@ public abstract class Database implements Proxy {
     }
 
     private DatabaseOpenHelper getHelper() {
-        if(helper==null) {
+        if (helper == null) {
             List<TableMetaData> metaDataList = new ArrayList<TableMetaData>();
-            for(Field field : this.getClass().getDeclaredFields()) {
+            for (Field field : this.getClass().getDeclaredFields()) {
                 TableDatasource t = field.getAnnotation(TableDatasource.class);
-                if(t==null) {
+                if (t == null) {
                     continue;
                 }
 

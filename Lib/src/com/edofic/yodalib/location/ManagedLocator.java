@@ -30,7 +30,7 @@ import android.os.Handler;
  * handler must then poll current best location
  * updates are preformed only if new location is worthy
  * can use last known location to init with filtering by age
- *
+ * <p/>
  * based heavily on google's sample
  */
 public class ManagedLocator {

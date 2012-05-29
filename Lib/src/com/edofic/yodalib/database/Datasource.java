@@ -33,6 +33,7 @@ public class Datasource<T> {
     private final Proxy proxy;
     private final Class c;
     private final TableMetaData metaData;
+    private long noOfClients = 0;
 
     /**
      * creates new datasource (one table/db)
@@ -68,6 +69,7 @@ public class Datasource<T> {
      * gets writable database
      */
     public void open() {
+        noOfClients++;
         db = proxy.getWritableDatabase();
     }
 
@@ -75,7 +77,14 @@ public class Datasource<T> {
      * closes database connection
      */
     public void close() {
-        db.close();
+        noOfClients--;
+        if (noOfClients <= 0) {
+            noOfClients = 0;
+            if (db != null && db.isOpen()) {
+                db.close();
+                db = null;
+            }
+        }
     }
 
     /**
@@ -141,9 +150,9 @@ public class Datasource<T> {
 
         long id;
         if (!update) {
-            id=db.insert(metaData.getTableName(), null, values);
+            id = db.insert(metaData.getTableName(), null, values);
         } else {
-            id=db.update(metaData.getTableName(), values,
+            id = db.update(metaData.getTableName(), values,
                     whereClause.toString(), null);
         }
         return id;
@@ -158,7 +167,7 @@ public class Datasource<T> {
      */
     public long insertSingle(T t) {
         open();
-        long id=insert(t);
+        long id = insert(t);
         close();
         return id;
     }
