@@ -28,7 +28,7 @@ import com.edofic.yodalib.R;
  * Date: 5/25/12
  * Time: 9:33 AM
  */
-public class AsyncLoader extends RelativeLayout {
+public class AsyncLoader<T1, T2, T3> extends RelativeLayout {
     private AsyncTask task;
     private View progress;
 
@@ -49,11 +49,11 @@ public class AsyncLoader extends RelativeLayout {
         progress.setVisibility(!visible ? View.VISIBLE : View.INVISIBLE);
     }
 
-    public void setTask(AsyncTask task) {
+    public void setTask(AsyncTask<T1, T2, T3> task) {
         this.task = task;
     }
 
-    public void load(Object... params) {
+    public void load(T1... params) {
         setChildrenVisibility(false);
         task.execute(params);
     }
