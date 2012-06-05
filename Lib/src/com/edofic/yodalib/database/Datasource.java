@@ -33,7 +33,6 @@ public class Datasource<T> {
     private final Proxy proxy;
     private final Class c;
     private final TableMetaData metaData;
-    private long noOfClients = 0;
 
     /**
      * creates new datasource (one table/db)
@@ -69,7 +68,6 @@ public class Datasource<T> {
      * gets writable database
      */
     public void open() {
-        noOfClients++;
         db = proxy.getWritableDatabase();
     }
 
@@ -77,14 +75,7 @@ public class Datasource<T> {
      * closes database connection
      */
     public void close() {
-        noOfClients--;
-        if (noOfClients <= 0) {
-            noOfClients = 0;
-            if (db != null && db.isOpen()) {
-                db.close();
-                db = null;
-            }
-        }
+        db.close();
     }
 
     /**
@@ -92,12 +83,7 @@ public class Datasource<T> {
      * does not nest transactions!
      */
     public void beginTransaction() {
-        if (db == null || !db.isOpen()) {
-            open();
-        }
-        if (!db.inTransaction()) {
-            db.beginTransaction();
-        }
+        beginTransaction();
     }
 
     /**
@@ -159,20 +145,6 @@ public class Datasource<T> {
     }
 
     /**
-     * convenience method for inserting single element
-     * see docs for insert
-     *
-     * @param t item to insert
-     * @return new id if insertion or numbers of row affected if update
-     */
-    public long insertSingle(T t) {
-        open();
-        long id = insert(t);
-        close();
-        return id;
-    }
-
-    /**
      * selectively load table
      *
      * @param whereClause where clause formatted for SQLite without the "WHERE"
@@ -180,7 +152,6 @@ public class Datasource<T> {
      */
     @SuppressWarnings("unchecked") //explained in place
     public List<T> get(String whereClause) {
-        open();
         ArrayList<T> items = new ArrayList<T>();
         Cursor cursor =
                 db.query(metaData.getTableName(), metaData.getColumnNames(), whereClause,
@@ -194,7 +165,6 @@ public class Datasource<T> {
             cursor.moveToNext();
         }
         cursor.close();
-        close();
         return items;
     }
 
@@ -230,9 +200,7 @@ public class Datasource<T> {
      * @param whereClause where clause formatted for SQLite without the "WHERE"
      */
     public void delete(String whereClause) {
-        open();
         db.delete(metaData.getTableName(), whereClause, null);
-        close();
     }
 
     /**
