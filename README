@@ -1,9 +1,9 @@
-YodaLib version 0.2
+YodaLib version 0.3
 ===================
 
 android library project with some reusable components
 
-NOTE: taged versions SHOULD be backwards compatible(though i don't guarantee)
+not compatible with 0.2
 
 currently contains:
     - very simple database datasource with automatic code generation
