@@ -24,7 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: andraz
@@ -39,6 +41,7 @@ public abstract class Database implements Proxy {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     protected @interface TableDatasource {
+        public Class injectForType();
     }
 
     private Context mContext;
@@ -50,6 +53,8 @@ public abstract class Database implements Proxy {
         this.mContext = context;
         this.mName = name;
         this.mVersion = version;
+
+        init();
     }
 
     @Override
@@ -59,33 +64,39 @@ public abstract class Database implements Proxy {
 
     @Override
     public SQLiteDatabase getWritableDatabase() {
-        return getHelper().getWritableDatabase();
+        return helper.getWritableDatabase();
     }
 
-    private DatabaseOpenHelper getHelper() {
-        if (helper == null) {
-            List<TableMetaData> metaDataList = new ArrayList<TableMetaData>();
-            for (Field field : this.getClass().getDeclaredFields()) {
-                TableDatasource t = field.getAnnotation(TableDatasource.class);
-                if (t == null) {
-                    continue;
-                }
-
-                try {
-                    field.setAccessible(true);
-                    Datasource datasource = (Datasource) field.get(this);
-                    TableMetaData metaData = MetaDataFactory.get(datasource.getType());
-                    metaDataList.add(metaData);
-                } catch (IllegalAccessException e) {
-                    throw new AssertionError();
-                } catch (ClassCastException e) {
-                    throw new IllegalArgumentException("annotated class should extend datasource");
-                }
+    private void init() {
+        List<TableMetaData> metaDataList = new ArrayList<TableMetaData>();
+        Map<Field, Class> fields = new HashMap<Field, Class>();
+        for (Field field : this.getClass().getDeclaredFields()) {
+            TableDatasource t = field.getAnnotation(TableDatasource.class);
+            if (t == null) {
+                continue;
             }
 
-            TableMetaData[] meta = metaDataList.toArray(new TableMetaData[metaDataList.size()]);
-            helper = new DatabaseOpenHelper(mContext, meta, mName, mVersion);
+            try {
+                Class c = t.injectForType();
+                metaDataList.add(MetaDataFactory.get(c));
+                fields.put(field, c);
+            } catch (ClassCastException e) {
+                throw new IllegalArgumentException("annotated class should extend datasource");
+            }
         }
-        return helper;
+
+        TableMetaData[] meta = metaDataList.toArray(new TableMetaData[metaDataList.size()]);
+        helper = new DatabaseOpenHelper(mContext, meta, mName, mVersion);
+
+        //injection magic
+        for (Field field : fields.keySet()) {
+            Class c = fields.get(field);
+            field.setAccessible(true);
+            try {
+                field.set(this, new Datasource(this, c));
+            } catch (IllegalAccessException e) {
+                throw new AssertionError("Illegal access - field is set accessible?!?");
+            }
+        }
     }
 }

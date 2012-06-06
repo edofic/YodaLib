@@ -36,6 +36,7 @@ public class Datasource<T> {
 
     /**
      * creates new datasource (one table/db)
+     * and opens it
      *
      * @param context context
      * @param c       must be equal to T, limitation because of type erasure
@@ -46,6 +47,10 @@ public class Datasource<T> {
 
     /**
      * creates new datasource for use in a database (multiple tables)
+     * usually this constructor is called from proxy constructor,
+     * so opening cannot be performed, because proxy hasn't fully initialised - catch 22
+     * this is solved by incjection. if you happen to use subclasses of this, just don't call
+     * super(Proxy, Class)
      *
      * @param proxy usually the parent database. for 1 table/db usage use context,class constructor
      * @param c     must be equal to T, limitation because of type erasure
@@ -54,6 +59,7 @@ public class Datasource<T> {
         this.c = c;
         this.metaData = MetaDataFactory.get(c);
         this.proxy = proxy;
+        open();
     }
 
     public TableMetaData getMetaData() {
@@ -72,10 +78,11 @@ public class Datasource<T> {
     }
 
     /**
-     * closes database connection
+     * closes database connection, renders the datasource useless
      */
     public void close() {
         db.close();
+        db = null;
     }
 
     /**
@@ -83,7 +90,7 @@ public class Datasource<T> {
      * does not nest transactions!
      */
     public void beginTransaction() {
-        beginTransaction();
+        db.beginTransaction();
     }
 
     /**
