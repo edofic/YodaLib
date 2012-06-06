@@ -27,6 +27,11 @@ import com.edofic.yodalib.R;
  * User: andraz
  * Date: 5/25/12
  * Time: 9:33 AM
+ * Relative layout which supports hiding its children when executing a task.
+ * first set  a task
+ * then call load
+ * children will be hidden and your task exected
+ * remember to calll done from your task's onPostExecute to bring children back
  */
 public class AsyncLoader<T1, T2, T3> extends RelativeLayout {
     private AsyncTask task;

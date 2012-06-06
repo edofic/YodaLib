@@ -38,6 +38,10 @@ import java.util.Map;
  * that's mostly it. see examples
  */
 public abstract class Database implements Proxy {
+    /**
+     * for taging member datasources in database descendants
+     * Datasource for selected type is automatically injected
+     */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     protected @interface TableDatasource {

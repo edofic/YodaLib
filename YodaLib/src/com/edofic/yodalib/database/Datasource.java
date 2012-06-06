@@ -27,6 +27,9 @@ import java.util.List;
  * User: andraz
  * Date: 4/28/12
  * Time: 5:13 PM
+ * The core unit.
+ * Represents one table in database.
+ * Connection is made when object is created and closed with close()
  */
 public class Datasource<T> {
     private SQLiteDatabase db;
