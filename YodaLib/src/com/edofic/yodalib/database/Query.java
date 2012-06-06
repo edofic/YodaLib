@@ -6,11 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
  * User: andraz
  * Date: 5/18/12
  * Time: 9:56 AM
- * To change this template use File | Settings | File Templates.
  */
 public class Query<T> {
     private TableMetaData metaData;
