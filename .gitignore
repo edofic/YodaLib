@@ -1,8 +1,8 @@
 .idea
 out
-Lib/local.properties
-Lib/bin
-Lib/gen
-Lib/Lib.iml
+YodaLib/local.properties
+YodaLib/bin
+YodaLib/gen
+YodaLib/Lib.iml
 
 
