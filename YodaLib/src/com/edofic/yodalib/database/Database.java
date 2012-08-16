@@ -97,7 +97,7 @@ public abstract class Database implements Proxy {
             Class c = fields.get(field);
             field.setAccessible(true);
             try {
-                field.set(this, new Datasource(this, c));
+                field.set(this, Datasource.create(this, c));
             } catch (IllegalAccessException e) {
                 throw new AssertionError("Illegal access - field is set accessible?!?");
             }

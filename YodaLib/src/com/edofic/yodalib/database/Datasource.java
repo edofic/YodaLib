@@ -32,6 +32,16 @@ import java.util.List;
  * Connection is made when object is created and closed with close()
  */
 public class Datasource<T> {
+
+    public static <T2> Datasource<T2> create(Context context, Class<T2> c) {
+        return new Datasource<T2>(context, c);
+    }
+
+    public static <T2> Datasource<T2> create(Proxy proxy, Class c) {
+        return new Datasource<T2>(proxy, c);
+    }
+
+
     private SQLiteDatabase db;
     private final Proxy proxy;
     private final Class c;
@@ -44,7 +54,7 @@ public class Datasource<T> {
      * @param context context
      * @param c       must be equal to T, limitation because of type erasure
      */
-    public Datasource(Context context, Class c) {
+    private Datasource(Context context, Class c) {
         this(new SingleTableProxy(context, c), c);
     }
 
@@ -58,7 +68,7 @@ public class Datasource<T> {
      * @param proxy usually the parent database. for 1 table/db usage use context,class constructor
      * @param c     must be equal to T, limitation because of type erasure
      */
-    public Datasource(Proxy proxy, Class c) {
+    private Datasource(Proxy proxy, Class c) {
         this.c = c;
         this.metaData = MetaDataFactory.get(c);
         this.proxy = proxy;
