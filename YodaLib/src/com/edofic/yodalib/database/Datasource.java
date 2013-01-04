@@ -99,32 +99,6 @@ public class Datasource<T> {
     }
 
     /**
-     * make sure that database is open and transaction is in progress
-     * does not nest transactions!
-     */
-    public void beginTransaction() {
-        db.beginTransaction();
-    }
-
-    /**
-     * is db is open and transaction is in progress, set it to successful
-     */
-    public void transactionSuccessful() {
-        if (db.isOpen() && db.inTransaction()) {
-            db.setTransactionSuccessful();
-        }
-    }
-
-    /**
-     * is db is open and transaction is in progress, end it
-     */
-    public void endTransaction() {
-        if (db.isOpen() && db.inTransaction()) {
-            db.endTransaction();
-        }
-    }
-
-    /**
      * inserts new entry to the db or updates existing one
      * update is performed if field(s) with autoincrement are set
      * *YOU HAVE TO MANUALLY OPEN AND CLOSE THE DB*
